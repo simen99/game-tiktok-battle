@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Battle Royale</title>
+    <title>TAP BATTLE GAME FREE</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --blue-neon: #00f3ff;
             --pink-neon: #ff007f;
-            --bg-dark: #0a0a16;
+            --bg-dark: #07070f;
         }
 
         body, html {
@@ -20,10 +20,76 @@
             overflow: hidden;
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 50% 50%, #15152e 0%, #0a0a16 100%);
+            background-image: radial-gradient(circle at 50% 50%, #111126 0%, #07070f 100%);
         }
 
-        /* Container Atas-Bawah (Sangat cocok untuk layar HP Tegak) */
+        /* OVERLAY PANEL HUD (Atas Layar) */
+        .hud-overlay {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: rgba(10, 10, 22, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 10px 15px;
+            text-align: center;
+            z-index: 50;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .hud-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 0 8px 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .hud-instructions {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .hud-pill {
+            flex: 1;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 4px 6px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .pill-tap {
+            border-color: rgba(255, 255, 255, 0.2);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .pill-boys {
+            border-color: rgba(0, 243, 255, 0.4);
+            color: #00f3ff;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
+        }
+
+        .pill-girls {
+            border-color: rgba(255, 0, 127, 0.4);
+            color: #ff007f;
+            text-shadow: 0 0 5px rgba(255, 0, 127, 0.3);
+        }
+
+        /* BATTLE ARENA */
         .battle-arena {
             display: flex;
             flex-direction: column;
@@ -39,23 +105,22 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            transition: flex 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: flex 0.6s cubic-bezier(0.19, 1, 0.22, 1);
             overflow: hidden;
         }
 
-        /* Efek Grid Cyberpunk di Background */
         .team-pane::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-size: 50px 50px;
-            opacity: 0.08;
+            background-size: 45px 45px;
+            opacity: 0.06;
             pointer-events: none;
         }
 
         #boys-pane {
-            background: linear-gradient(180deg, rgba(0, 122, 255, 0.25) 0%, rgba(0, 243, 255, 0.03) 100%);
-            border-bottom: 2px solid rgba(0, 243, 255, 0.3);
+            background: linear-gradient(180deg, rgba(0, 122, 255, 0.2) 0%, rgba(0, 243, 255, 0.02) 100%);
+            border-bottom: 2px solid rgba(0, 243, 255, 0.2);
         }
         #boys-pane::before {
             background-image: linear-gradient(to right, var(--blue-neon) 1px, transparent 1px),
@@ -63,107 +128,103 @@
         }
 
         #girls-pane {
-            background: linear-gradient(0deg, rgba(255, 0, 127, 0.25) 0%, rgba(255, 0, 127, 0.03) 100%);
-            border-top: 2px solid rgba(255, 0, 127, 0.3);
+            background: linear-gradient(0deg, rgba(255, 0, 127, 0.2) 0%, rgba(255, 0, 127, 0.02) 100%);
+            border-top: 2px solid rgba(255, 0, 127, 0.2);
         }
         #girls-pane::before {
             background-image: linear-gradient(to right, var(--pink-neon) 1px, transparent 1px),
                               linear-gradient(to bottom, var(--pink-neon) 1px, transparent 1px);
         }
 
-        /* Label Team */
         .team-tag {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 5px;
             margin: 0;
-            position: relative;
             z-index: 5;
         }
 
         #boys-pane .team-tag {
             color: #fff;
-            text-shadow: 0 0 10px var(--blue-neon), 0 0 20px var(--blue-neon);
+            text-shadow: 0 0 10px var(--blue-neon);
         }
 
         #girls-pane .team-tag {
             color: #fff;
-            text-shadow: 0 0 10px var(--pink-neon), 0 0 20px var(--pink-neon);
+            text-shadow: 0 0 10px var(--pink-neon);
         }
 
-        /* Skor Bergaya Neon */
         .score-display {
-            font-size: 5.5rem;
+            font-size: 5rem;
             font-weight: 800;
             margin-top: 5px;
-            position: relative;
             z-index: 5;
             transition: transform 0.1s ease;
         }
 
         #boys-pane .score-display {
             color: #00f3ff;
-            text-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
+            text-shadow: 0 0 12px rgba(0, 243, 255, 0.7);
         }
 
         #girls-pane .score-display {
             color: #ff007f;
-            text-shadow: 0 0 15px rgba(255, 0, 127, 0.8);
+            text-shadow: 0 0 12px rgba(255, 0, 127, 0.7);
         }
 
-        /* Animasi Melayang untuk Emoji */
         .team-avatar {
-            font-size: 4.8rem;
+            font-size: 4.2rem;
             margin-bottom: 5px;
-            animation: floatAnimation 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+            animation: floatAnimation 3.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
             z-index: 5;
         }
         #girls-pane .team-avatar {
-            animation-delay: 1.5s;
+            animation-delay: 1.75s;
         }
 
         @keyframes floatAnimation {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-12px) scale(1.05); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
-        /* Lencana VS di Tengah */
         .vs-badge {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 75px;
-            height: 75px;
-            background: #0d0d1e;
-            border: 3px solid #fff;
+            width: 65px;
+            height: 65px;
+            background: #090916;
+            border: 2px solid #fff;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: 800;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: #fff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
             z-index: 20;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
-            50% { transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 0 25px rgba(0, 243, 255, 0.6); }
-            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.06); box-shadow: 0 0 20px rgba(0, 243, 255, 0.5); }
+            100% { transform: translate(-50%, -50%) scale(1); }
         }
 
-        /* Desain Toast Notifikasi yang Jauh Lebih Elegan (Glassmorphism) */
+        /* NOTIFIKASI RINGKAS (Mini-Toasts) */
         .toast-container {
             position: absolute;
-            bottom: 30px;
-            left: 5%;
-            width: 90%;
-            max-height: 200px;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 320px;
+            max-height: 140px;
             overflow: hidden;
             display: flex;
             flex-direction: column-reverse;
@@ -172,44 +233,49 @@
         }
 
         .toast {
-            background: rgba(14, 14, 28, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-left: 5px solid #fff;
-            padding: 12px 18px;
-            margin: 5px 0;
-            border-radius: 12px;
-            font-size: 0.95rem;
+            background: rgba(10, 10, 22, 0.9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-left: 4px solid #fff;
+            padding: 8px 12px;
+            margin: 3px 0;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-weight: 600;
-            color: #f0f0ff;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 2s 3s forwards;
+            color: #e2e2ff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            animation: slideIn 0.25s ease-out forwards, fadeOut 1.5s 2s forwards;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
         }
 
-        .toast.boys-action {
-            border-left-color: var(--blue-neon);
-            text-shadow: 0 0 5px rgba(0, 243, 255, 0.2);
-        }
-
-        .toast.girls-action {
-            border-left-color: var(--pink-neon);
-            text-shadow: 0 0 5px rgba(255, 0, 127, 0.2);
-        }
+        .toast.boys-action { border-left-color: var(--blue-neon); }
+        .toast.girls-action { border-left-color: var(--pink-neon); }
 
         @keyframes slideIn {
-            from { transform: translateX(-120px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateY(15px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         @keyframes fadeOut {
-            to { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 0; transform: translateY(-15px); }
         }
     </style>
 </head>
 <body>
+
+    <!-- OVERLAY INSTRUKSI -->
+    <div class="hud-overlay">
+        <h1 class="hud-title">TAP BATTLE GAME FREE</h1>
+        <div class="hud-instructions">
+            <span class="hud-pill pill-tap">📱 Tap = Random</span>
+            <span class="hud-pill pill-boys">🧑🏻 Boys = 1</span>
+            <span class="hud-pill pill-girls">👩🏻 Girls = 2</span>
+        </div>
+    </div>
+
+    <!-- ARENA PERMAINAN -->
     <div class="battle-arena">
         <div id="boys-pane" class="team-pane">
             <div class="team-avatar">🧑🏻‍💻</div>
@@ -226,6 +292,7 @@
         </div>
     </div>
 
+    <!-- WIDGET NOTIFIKASI MINI -->
     <div id="toasts" class="toast-container"></div>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -243,7 +310,6 @@
 
         function updateUI() {
             const total = boysScore + girlsScore;
-            // Dibatasi minimal 15% agar tulisan tidak hilang/terpotong jika salah satu menang banyak
             const boysPercent = Math.max(15, Math.min(85, (boysScore / total) * 100));
             const girlsPercent = 100 - boysPercent;
 
@@ -253,19 +319,18 @@
             boysScoreElem.innerText = Math.round(boysScore);
             girlsScoreElem.innerText = Math.round(girlsScore);
 
-            // Efek hentakan kecil pada angka saat skor bertambah
-            boysScoreElem.style.transform = "scale(1.1)";
-            girlsScoreElem.style.transform = "scale(1.1)";
+            boysScoreElem.style.transform = "scale(1.08)";
+            girlsScoreElem.style.transform = "scale(1.08)";
             setTimeout(() => {
                 boysScoreElem.style.transform = "scale(1)";
                 girlsScoreElem.style.transform = "scale(1)";
-            }, 100);
+            }, 80);
 
             if (boysPercent >= 83) {
-                showToast("🎉 TEAM BOYS MENANG MUTLAK! Game di-reset...", "blue");
+                showToast("🎉 TEAM BOYS MENANG MUTLAK! Reset...", "blue");
                 resetGame();
             } else if (girlsPercent >= 83) {
-                showToast("🎉 TEAM GIRLS MENANG MUTLAK! Game di-reset...", "pink");
+                showToast("🎉 TEAM GIRLS MENANG MUTLAK! Reset...", "pink");
                 resetGame();
             }
         }
@@ -273,10 +338,16 @@
         function resetGame() {
             boysScore = 50;
             girlsScore = 50;
-            setTimeout(updateUI, 3000);
+            setTimeout(updateUI, 2500);
         }
 
+        // Fungsi menampilkan notifikasi mini
         function showToast(message, color = "white") {
+            // Batasi jumlah notifikasi aktif agar tidak menumpuk memenuhi layar
+            if (toastContainer.children.length >= 3) {
+                toastContainer.removeChild(toastContainer.firstChild);
+            }
+
             const toast = document.createElement('div');
             toast.className = 'toast';
             if (color === "blue") toast.className += " boys-action";
@@ -285,14 +356,16 @@
             
             toastContainer.appendChild(toast);
 
+            // Bersihkan elemen otomatis setelah animasi selesai
             setTimeout(() => {
                 toast.remove();
-            }, 5000);
+            }, 3500);
         }
 
         socket.on('teamJoined', (data) => {
             const teamColor = data.team === 'boys' ? 'blue' : 'pink';
-            showToast(`👥 @${data.username} bergabung ke Tim ${data.team.toUpperCase()}!`, teamColor);
+            const textSource = data.isRandom ? "diacak masuk" : "masuk";
+            showToast(`👥 @${data.username} ${textSource} Tim ${data.team.toUpperCase()}`, teamColor);
         });
 
         socket.on('pointsAdded', (data) => {
@@ -303,9 +376,9 @@
                 girlsScore += points;
             }
 
-            const media = data.type === 'gift' ? `mengirim kado ${data.giftName} 🎁` : "mengetuk layar (like) ❤️";
+            const actionText = data.type === 'gift' ? `Gift ${data.giftName} (+${points})` : `Tap (+${points})`;
             const teamColor = data.team === 'boys' ? 'blue' : 'pink';
-            showToast(`⚡ @${data.username} ${media} (+${points} poin)`, teamColor);
+            showToast(`⚡ @${data.username}: ${actionText}`, teamColor);
             updateUI();
         });
 
