@@ -3,77 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Battle: Boys vs Girls</title>
+    <title>TikTok Battle Royale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --blue-neon: #00f3ff;
+            --pink-neon: #ff007f;
+            --bg-dark: #0a0a16;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            background-color: #121212;
-            color: white;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 50%, #15152e 0%, #0a0a16 100%);
         }
 
-        .container {
+        /* Container Atas-Bawah (Sangat cocok untuk layar HP Tegak) */
+        .battle-arena {
             display: flex;
+            flex-direction: column;
             width: 100%;
-            height: 100vh;
+            height: 100%;
             position: relative;
         }
 
-        .team {
+        .team-pane {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: flex 0.4s ease-out;
             position: relative;
+            transition: flex 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
         }
 
-        #boys {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-        }
-
-        #girls {
-            background: linear-gradient(135deg, #ff758c, #ff7eb3);
-        }
-
-        .team h1 {
-            font-size: 3rem;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .score {
-            font-size: 4.5rem;
-            font-weight: bold;
-            margin-top: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .divider {
+        /* Efek Grid Cyberpunk di Background */
+        .team-pane::before {
+            content: '';
             position: absolute;
-            left: 50%;
-            top: 0;
-            width: 12px;
-            height: 100%;
-            background-color: #fff;
-            box-shadow: 0 0 15px #fff;
-            z-index: 10;
-            transform: translateX(-50%);
-            transition: left 0.4s ease-out;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: 50px 50px;
+            opacity: 0.08;
+            pointer-events: none;
         }
 
-        .notification-container {
+        #boys-pane {
+            background: linear-gradient(180deg, rgba(0, 122, 255, 0.25) 0%, rgba(0, 243, 255, 0.03) 100%);
+            border-bottom: 2px solid rgba(0, 243, 255, 0.3);
+        }
+        #boys-pane::before {
+            background-image: linear-gradient(to right, var(--blue-neon) 1px, transparent 1px),
+                              linear-gradient(to bottom, var(--blue-neon) 1px, transparent 1px);
+        }
+
+        #girls-pane {
+            background: linear-gradient(0deg, rgba(255, 0, 127, 0.25) 0%, rgba(255, 0, 127, 0.03) 100%);
+            border-top: 2px solid rgba(255, 0, 127, 0.3);
+        }
+        #girls-pane::before {
+            background-image: linear-gradient(to right, var(--pink-neon) 1px, transparent 1px),
+                              linear-gradient(to bottom, var(--pink-neon) 1px, transparent 1px);
+        }
+
+        /* Label Team */
+        .team-tag {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin: 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        #boys-pane .team-tag {
+            color: #fff;
+            text-shadow: 0 0 10px var(--blue-neon), 0 0 20px var(--blue-neon);
+        }
+
+        #girls-pane .team-tag {
+            color: #fff;
+            text-shadow: 0 0 10px var(--pink-neon), 0 0 20px var(--pink-neon);
+        }
+
+        /* Skor Bergaya Neon */
+        .score-display {
+            font-size: 5.5rem;
+            font-weight: 800;
+            margin-top: 5px;
+            position: relative;
+            z-index: 5;
+            transition: transform 0.1s ease;
+        }
+
+        #boys-pane .score-display {
+            color: #00f3ff;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
+        }
+
+        #girls-pane .score-display {
+            color: #ff007f;
+            text-shadow: 0 0 15px rgba(255, 0, 127, 0.8);
+        }
+
+        /* Animasi Melayang untuk Emoji */
+        .team-avatar {
+            font-size: 4.8rem;
+            margin-bottom: 5px;
+            animation: floatAnimation 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+            z-index: 5;
+        }
+        #girls-pane .team-avatar {
+            animation-delay: 1.5s;
+        }
+
+        @keyframes floatAnimation {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-12px) scale(1.05); }
+        }
+
+        /* Lencana VS di Tengah */
+        .vs-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 75px;
+            height: 75px;
+            background: #0d0d1e;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            z-index: 20;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
+            50% { transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 0 25px rgba(0, 243, 255, 0.6); }
+            100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
+        }
+
+        /* Desain Toast Notifikasi yang Jauh Lebih Elegan (Glassmorphism) */
+        .toast-container {
             position: absolute;
             bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            max-height: 250px;
+            left: 5%;
+            width: 90%;
+            max-height: 200px;
             overflow: hidden;
             display: flex;
             flex-direction: column-reverse;
@@ -81,19 +171,37 @@
             pointer-events: none;
         }
 
-        .notif {
-            background: rgba(0, 0, 0, 0.75);
-            padding: 10px 20px;
-            margin: 5px auto;
-            border-radius: 25px;
-            font-size: 1.2rem;
-            animation: slideUp 0.3s ease-out, fadeOut 2.5s 2.5s forwards;
-            width: fit-content;
+        .toast {
+            background: rgba(14, 14, 28, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-left: 5px solid #fff;
+            padding: 12px 18px;
+            margin: 5px 0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #f0f0ff;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 2s 3s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .toast.boys-action {
+            border-left-color: var(--blue-neon);
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.2);
+        }
+
+        .toast.girls-action {
+            border-left-color: var(--pink-neon);
+            text-shadow: 0 0 5px rgba(255, 0, 127, 0.2);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-120px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         @keyframes fadeOut {
@@ -102,19 +210,23 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="boys" class="team">
-            <h1>BOYS 🧑🏻</h1>
-            <div id="boys-score" class="score">50</div>
+    <div class="battle-arena">
+        <div id="boys-pane" class="team-pane">
+            <div class="team-avatar">🧑🏻‍💻</div>
+            <h1 class="team-tag">BOYS</h1>
+            <div id="boys-score" class="score-display">50</div>
         </div>
-        <div id="divider" class="divider"></div>
-        <div id="girls" class="team">
-            <h1>GIRLS 👩🏻</h1>
-            <div id="girls-score" class="score">50</div>
+        
+        <div class="vs-badge">VS</div>
+        
+        <div id="girls-pane" class="team-pane">
+            <div class="team-avatar">👩🏻‍💻</div>
+            <h1 class="team-tag">GIRLS</h1>
+            <div id="girls-score" class="score-display">50</div>
         </div>
     </div>
 
-    <div id="notifications" class="notification-container"></div>
+    <div id="toasts" class="toast-container"></div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -123,30 +235,37 @@
         let boysScore = 50; 
         let girlsScore = 50;
 
-        const boysElem = document.getElementById('boys');
-        const girlsElem = document.getElementById('girls');
-        const dividerElem = document.getElementById('divider');
+        const boysPane = document.getElementById('boys-pane');
+        const girlsPane = document.getElementById('girls-pane');
         const boysScoreElem = document.getElementById('boys-score');
         const girlsScoreElem = document.getElementById('girls-score');
-        const notifContainer = document.getElementById('notifications');
+        const toastContainer = document.getElementById('toasts');
 
         function updateUI() {
             const total = boysScore + girlsScore;
-            const boysPercent = (boysScore / total) * 100;
-            const girlsPercent = (girlsScore / total) * 100;
+            // Dibatasi minimal 15% agar tulisan tidak hilang/terpotong jika salah satu menang banyak
+            const boysPercent = Math.max(15, Math.min(85, (boysScore / total) * 100));
+            const girlsPercent = 100 - boysPercent;
 
-            boysElem.style.flex = boysPercent;
-            girlsElem.style.flex = girlsPercent;
-            dividerElem.style.left = `${boysPercent}%`;
+            boysPane.style.flex = boysPercent;
+            girlsPane.style.flex = girlsPercent;
 
             boysScoreElem.innerText = Math.round(boysScore);
             girlsScoreElem.innerText = Math.round(girlsScore);
 
-            if (boysPercent >= 93) {
-                showNotification("🎉 TIM BOYS MENANG! Mengatur ulang permainan...", "blue");
+            // Efek hentakan kecil pada angka saat skor bertambah
+            boysScoreElem.style.transform = "scale(1.1)";
+            girlsScoreElem.style.transform = "scale(1.1)";
+            setTimeout(() => {
+                boysScoreElem.style.transform = "scale(1)";
+                girlsScoreElem.style.transform = "scale(1)";
+            }, 100);
+
+            if (boysPercent >= 83) {
+                showToast("🎉 TEAM BOYS MENANG MUTLAK! Game di-reset...", "blue");
                 resetGame();
-            } else if (girlsPercent >= 93) {
-                showNotification("🎉 TIM GIRLS MENANG! Mengatur ulang permainan...", "pink");
+            } else if (girlsPercent >= 83) {
+                showToast("🎉 TEAM GIRLS MENANG MUTLAK! Game di-reset...", "pink");
                 resetGame();
             }
         }
@@ -157,22 +276,23 @@
             setTimeout(updateUI, 3000);
         }
 
-        function showNotification(message, color = "white") {
-            const notif = document.createElement('div');
-            notif.className = 'notif';
-            notif.innerText = message;
-            if (color === "blue") notif.style.border = "2px solid #2a5298";
-            if (color === "pink") notif.style.border = "2px solid #ff7eb3";
+        function showToast(message, color = "white") {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if (color === "blue") toast.className += " boys-action";
+            if (color === "pink") toast.className += " girls-action";
+            toast.innerText = message;
             
-            notifContainer.appendChild(notif);
+            toastContainer.appendChild(toast);
 
             setTimeout(() => {
-                notif.remove();
+                toast.remove();
             }, 5000);
         }
 
         socket.on('teamJoined', (data) => {
-            showNotification(`👥 @${data.username} bergabung ke Tim ${data.team.toUpperCase()}!`);
+            const teamColor = data.team === 'boys' ? 'blue' : 'pink';
+            showToast(`👥 @${data.username} bergabung ke Tim ${data.team.toUpperCase()}!`, teamColor);
         });
 
         socket.on('pointsAdded', (data) => {
@@ -184,7 +304,8 @@
             }
 
             const media = data.type === 'gift' ? `mengirim kado ${data.giftName} 🎁` : "mengetuk layar (like) ❤️";
-            showNotification(`⚡ @${data.username} ${media} (+${points} poin ke tim ${data.team.toUpperCase()})`);
+            const teamColor = data.team === 'boys' ? 'blue' : 'pink';
+            showToast(`⚡ @${data.username} ${media} (+${points} poin)`, teamColor);
             updateUI();
         });
 
