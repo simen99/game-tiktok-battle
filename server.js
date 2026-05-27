@@ -11,7 +11,7 @@ app.use(express.static('public'));
 
 // GANTI dengan username TikTok Anda (tanpa tanda '@')
 // Contoh: 'budi_gaming'
-const TIKTOK_USERNAME = 'iq8350'; 
+const TIKTOK_USERNAME = 'mantanpolwan6'; 
 
 const tiktokConnection = new WebcastPushConnection(TIKTOK_USERNAME);
 const userTeams = {}; 
