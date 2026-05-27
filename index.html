@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Battle: Boys vs Girls</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .team {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: flex 0.4s ease-out;
+            position: relative;
+        }
+
+        #boys {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        }
+
+        #girls {
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+        }
+
+        .team h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .score {
+            font-size: 4.5rem;
+            font-weight: bold;
+            margin-top: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .divider {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 12px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: 0 0 15px #fff;
+            z-index: 10;
+            transform: translateX(-50%);
+            transition: left 0.4s ease-out;
+        }
+
+        .notification-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-height: 250px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column-reverse;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .notif {
+            background: rgba(0, 0, 0, 0.75);
+            padding: 10px 20px;
+            margin: 5px auto;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            animation: slideUp 0.3s ease-out, fadeOut 2.5s 2.5s forwards;
+            width: fit-content;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-30px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="boys" class="team">
+            <h1>BOYS 🧑🏻</h1>
+            <div id="boys-score" class="score">50</div>
+        </div>
+        <div id="divider" class="divider"></div>
+        <div id="girls" class="team">
+            <h1>GIRLS 👩🏻</h1>
+            <div id="girls-score" class="score">50</div>
+        </div>
+    </div>
+
+    <div id="notifications" class="notification-container"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        let boysScore = 50; 
+        let girlsScore = 50;
+
+        const boysElem = document.getElementById('boys');
+        const girlsElem = document.getElementById('girls');
+        const dividerElem = document.getElementById('divider');
+        const boysScoreElem = document.getElementById('boys-score');
+        const girlsScoreElem = document.getElementById('girls-score');
+        const notifContainer = document.getElementById('notifications');
+
+        function updateUI() {
+            const total = boysScore + girlsScore;
+            const boysPercent = (boysScore / total) * 100;
+            const girlsPercent = (girlsScore / total) * 100;
+
+            boysElem.style.flex = boysPercent;
+            girlsElem.style.flex = girlsPercent;
+            dividerElem.style.left = `${boysPercent}%`;
+
+            boysScoreElem.innerText = Math.round(boysScore);
+            girlsScoreElem.innerText = Math.round(girlsScore);
+
+            if (boysPercent >= 93) {
+                showNotification("🎉 TIM BOYS MENANG! Mengatur ulang permainan...", "blue");
+                resetGame();
+            } else if (girlsPercent >= 93) {
+                showNotification("🎉 TIM GIRLS MENANG! Mengatur ulang permainan...", "pink");
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            boysScore = 50;
+            girlsScore = 50;
+            setTimeout(updateUI, 3000);
+        }
+
+        function showNotification(message, color = "white") {
+            const notif = document.createElement('div');
+            notif.className = 'notif';
+            notif.innerText = message;
+            if (color === "blue") notif.style.border = "2px solid #2a5298";
+            if (color === "pink") notif.style.border = "2px solid #ff7eb3";
+            
+            notifContainer.appendChild(notif);
+
+            setTimeout(() => {
+                notif.remove();
+            }, 5000);
+        }
+
+        socket.on('teamJoined', (data) => {
+            showNotification(`👥 @${data.username} bergabung ke Tim ${data.team.toUpperCase()}!`);
+        });
+
+        socket.on('pointsAdded', (data) => {
+            const points = data.points;
+            if (data.team === 'boys') {
+                boysScore += points;
+            } else {
+                girlsScore += points;
+            }
+
+            const media = data.type === 'gift' ? `mengirim kado ${data.giftName} 🎁` : "mengetuk layar (like) ❤️";
+            showNotification(`⚡ @${data.username} ${media} (+${points} poin ke tim ${data.team.toUpperCase()})`);
+            updateUI();
+        });
+
+        updateUI();
+    </script>
+</body>
+</html>
